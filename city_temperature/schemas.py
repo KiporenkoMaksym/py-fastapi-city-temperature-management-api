@@ -16,8 +16,9 @@ class CityList(City):
     id: int
 
 
-class UpdateCity(City):
-    pass
+class UpdateCity(BaseModel):
+    name: str | None = None
+    additional_info: str | None = None
 
 
 class CityDetail(City):
@@ -31,11 +32,11 @@ class Temperature(BaseModel):
     temperature: float
 
 
-class CreateTemperature(Temperature):
+class TemperatureCreate(Temperature):
     city_id: int
 
 
-class UpdateTemperature(Temperature):
+class TemperatureUpdate(Temperature):
     pass
 
 

@@ -44,16 +44,12 @@ def update_city(city_id: int, city: schemas.UpdateCity, db: Session = Depends(ge
 def delete_city(city_id: int, db: Session = Depends(get_db)):
     return crud.delete_city(db=db, city_id=city_id)
 
-@router.get("/temperatures/", response_model=list[schemas.TemperatureList])
-def read_temperatures(db: Session = Depends(get_db)):
-    return crud.get_all_temperatures(db=db)
-
-@router.get("/temperatures/", response_model=list[schemas.TemperatureDetail])
-def get_temperature_by_city(
+@router.get("/temperatures/")
+async def get_temperatures(
         city_id: int | None=None,
         db: Session = Depends(get_db)
 ):
-    return crud.get_temperature_by_city(db=db, city_id=city_id)
+    return crud.get_temperatures(db=db, city_id=city_id)
 
 @router.post("/temperatures/update/")
 async def update_temperature(db: Session = Depends(get_db)):

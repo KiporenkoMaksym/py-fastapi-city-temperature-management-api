@@ -51,10 +51,13 @@ def get_all_temperatures(db: Session):
     query = select(models.Temperature)
     return db.scalars(query).all()
 
-def get_temperature_by_city(db: Session, city_id: int | None = None):
-    return db.scalars(
-        select(models.Temperature).where(models.Temperature.city_id == city_id)
-    ).all()
+def get_temperatures(db: Session, city_id: int | None = None):
+    query = db.query(models.Temperature)
+
+    if city_id is not None:
+        query = query.filter(models.Temperature.city_id == city_id)
+
+    return query.all()
 
 def create_temperature(db: Session, city_id: int, temperature: float):
     db_temperature = models.Temperature(

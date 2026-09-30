@@ -48,8 +48,11 @@ def delete_city(city_id: int, db: Session = Depends(get_db)):
 def read_temperatures(db: Session = Depends(get_db)):
     return crud.get_all_temperatures(db=db)
 
-@router.get("/temperatures/{city_id}", response_model=list[schemas.TemperatureDetail])
-def get_temperature_by_city(city_id: int, db: Session = Depends(get_db)):
+@router.get("/temperatures/", response_model=list[schemas.TemperatureDetail])
+def get_temperature_by_city(
+        city_id: int | None=None,
+        db: Session = Depends(get_db)
+):
     return crud.get_temperature_by_city(db=db, city_id=city_id)
 
 @router.post("/temperatures/update/")
@@ -57,9 +60,22 @@ async def update_temperature(db: Session = Depends(get_db)):
 
     cities = crud.get_all_cities(db)
 
-    for city in cities:
-        temperature = await service.get_temperature(city.name)
+    if not cities:
+        raise HTTPException(
+            status_code=404,
+            detail="No cities found."
+        )
 
-        crud.create_temperature(db=db, city_id=city.id, temperature=temperature)
+    for city in cities:
+        try:
+            temperature = await service.get_temperature(city.name)
+
+            crud.create_temperature(db=db, city_id=city.id, temperature=temperature)
+
+        except Exception as e:
+            raise HTTPException(
+                status_code=502,
+                detail=f"Failed to get temperature for city '{city.name}': {str(e)}"
+            )
 
     return {"message": "Temperatures updated successfully"}

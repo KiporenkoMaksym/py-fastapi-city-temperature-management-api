@@ -18,6 +18,11 @@ class Temperature(Base):
     __tablename__ = "temperatures"
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
-    city_id: Mapped[int] = mapped_column(ForeignKey("cities.id"))
+    city_id: Mapped[int] = mapped_column(ForeignKey
+        (
+        "cities.id",
+        ondelete="CASCADE"
+        )
+    )
     date_time: Mapped[date] = mapped_column(Date, nullable=False)
     temperature: Mapped[float] = mapped_column(nullable=False)
